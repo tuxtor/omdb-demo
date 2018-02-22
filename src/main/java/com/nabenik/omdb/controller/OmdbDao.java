@@ -2,10 +2,13 @@ package com.nabenik.omdb.controller;
 
 import java.io.IOException;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Inject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.nabenik.omdb.dto.OmdbDTO;
@@ -13,11 +16,12 @@ import com.nabenik.omdb.dto.OmdbDTO;
 /**
  * Session Bean implementation class OmdbDao
  */
-@Stateless
+@RequestScoped
 public class OmdbDao {
 	
-	
-	final String BASE_OMDB_URL = "http://www.omdbapi.com/?apikey=a3804773&i=";
+	@Inject
+	@ConfigProperty(name = "omdbremote.url")
+	String baseOmdbUrl;
 
 	/**
 	 * Sync petition to omdb
@@ -27,8 +31,9 @@ public class OmdbDao {
 	public OmdbDTO getMovieInfo(String imdbId) {
 		Client client = ClientBuilder.newClient();
 		
+		System.out.println(baseOmdbUrl);
 		
-		String details =  client.target(BASE_OMDB_URL.concat(imdbId))
+		String details =  client.target(baseOmdbUrl.concat("&i=").concat(imdbId))
 				.request(MediaType.APPLICATION_JSON)
 				.get(String.class);
 		
