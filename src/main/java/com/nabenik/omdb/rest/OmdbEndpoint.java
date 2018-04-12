@@ -12,6 +12,9 @@ import javax.ws.rs.core.Response.Status;
 
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Timeout;
+import org.eclipse.microprofile.metrics.Counter;
+import org.eclipse.microprofile.metrics.annotation.Metered;
+import org.eclipse.microprofile.metrics.annotation.Metric;
 
 import com.nabenik.omdb.controller.OmdbDao;
 import com.nabenik.omdb.dto.OmdbDTO;
@@ -22,15 +25,20 @@ import com.nabenik.omdb.dto.OmdbDTO;
 @Consumes("application/json")
 public class OmdbEndpoint {
 	
-	final long TIMEOUT = 500L;
+	final long TIMEOUT = 2000L;
 	
 	@Inject
 	OmdbDao omdbService;
+	
+	@Inject
+	@Metric
+	Counter failedQueries;
 
 	@GET
 	@Path("/{id:[a-z]*[0-9][0-9]*}")
 	@Fallback(fallbackMethod = "findByIdFallBack")
     @Timeout(TIMEOUT)
+	@Metered
 	public Response findById(@PathParam("id") final String imdbId) {
 		OmdbDTO omdbdto = omdbService.getMovieInfo(imdbId);
 		if (omdbdto == null) {
@@ -41,6 +49,7 @@ public class OmdbEndpoint {
 	
 	public Response findByIdFallBack(@PathParam("id") final String imdbId) {
 		OmdbDTO omdbdto = new OmdbDTO("plot not available", null);
+		failedQueries.inc();
 		return Response.ok(omdbdto).build(); 
 	}
 
