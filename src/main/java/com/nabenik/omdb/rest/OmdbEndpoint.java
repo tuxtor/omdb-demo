@@ -48,7 +48,7 @@ public class OmdbEndpoint {
 	}
 	
 	public Response findByIdFallBack(@PathParam("id") final String imdbId) {
-		OmdbDTO omdbdto = new OmdbDTO("plot not available", null);
+		OmdbDTO omdbdto = new OmdbDTO("plot not available");
 		failedQueries.inc();
 		return Response.ok(omdbdto).build(); 
 	}

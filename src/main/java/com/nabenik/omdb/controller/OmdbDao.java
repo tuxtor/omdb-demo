@@ -31,7 +31,7 @@ public class OmdbDao {
 	public OmdbDTO getMovieInfo(String imdbId) {
 		Client client = ClientBuilder.newClient();
 		
-		System.out.println(baseOmdbUrl);
+		System.out.println("Request url " + baseOmdbUrl.concat("&i=").concat(imdbId));
 		
 		String details =  client.target(baseOmdbUrl.concat("&i=").concat(imdbId))
 				.request(MediaType.APPLICATION_JSON)
