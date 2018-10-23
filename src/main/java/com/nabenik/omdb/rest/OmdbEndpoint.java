@@ -25,7 +25,7 @@ import com.nabenik.omdb.dto.OmdbDTO;
 @Consumes("application/json")
 public class OmdbEndpoint {
 	
-	final long TIMEOUT = 2000L;
+	final long TIMEOUT = 500L;
 	
 	@Inject
 	OmdbDao omdbService;
@@ -38,7 +38,6 @@ public class OmdbEndpoint {
 	@Path("/{id:[a-z]*[0-9][0-9]*}")
 	@Fallback(fallbackMethod = "findByIdFallBack")
     @Timeout(TIMEOUT)
-	@Metered
 	public Response findById(@PathParam("id") final String imdbId) {
 		OmdbDTO omdbdto = omdbService.getMovieInfo(imdbId);
 		if (omdbdto == null) {
