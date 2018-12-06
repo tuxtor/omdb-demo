@@ -1,9 +1,7 @@
 package com.nabenik.omdb.controller;
 
-import java.io.IOException;
-
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
@@ -16,7 +14,7 @@ import com.nabenik.omdb.dto.OmdbDTO;
 /**
  * Session Bean implementation class OmdbDao
  */
-@RequestScoped
+@Named
 public class OmdbDao {
 	
 	@Inject
@@ -28,7 +26,7 @@ public class OmdbDao {
 	 * @param imdbId
 	 * @return OmdbDTO representation
 	 */
-	public OmdbDTO getMovieInfo(String imdbId) {
+	public OmdbDTO getMovieInfo(String imdbId) throws Exception {
 		Client client = ClientBuilder.newClient();
 		
 		System.out.println("Request url " + baseOmdbUrl.concat("&i=").concat(imdbId));
@@ -40,11 +38,7 @@ public class OmdbDao {
 		//Wrong way of marshalling 
 		ObjectMapper mapper = new ObjectMapper();
 		OmdbDTO omdbDTO = new OmdbDTO();
-		try {
-			omdbDTO = mapper.readValue(details, OmdbDTO.class);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} 
+		omdbDTO = mapper.readValue(details, OmdbDTO.class);
 		return omdbDTO;
 		
 	}

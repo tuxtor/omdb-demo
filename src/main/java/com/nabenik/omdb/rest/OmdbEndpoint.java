@@ -1,7 +1,7 @@
 package com.nabenik.omdb.rest;
 
-import javax.enterprise.context.RequestScoped;
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -13,13 +13,12 @@ import javax.ws.rs.core.Response.Status;
 import org.eclipse.microprofile.faulttolerance.Fallback;
 import org.eclipse.microprofile.faulttolerance.Timeout;
 import org.eclipse.microprofile.metrics.Counter;
-import org.eclipse.microprofile.metrics.annotation.Metered;
 import org.eclipse.microprofile.metrics.annotation.Metric;
 
 import com.nabenik.omdb.controller.OmdbDao;
 import com.nabenik.omdb.dto.OmdbDTO;
 
-@RequestScoped
+@Singleton
 @Path("/omdb")
 @Produces("application/json")
 @Consumes("application/json")
@@ -38,7 +37,7 @@ public class OmdbEndpoint {
 	@Path("/{id:[a-z]*[0-9][0-9]*}")
 	@Fallback(fallbackMethod = "findByIdFallBack")
     @Timeout(TIMEOUT)
-	public Response findById(@PathParam("id") final String imdbId) {
+	public Response findById(@PathParam("id") final String imdbId) throws Exception {
 		OmdbDTO omdbdto = omdbService.getMovieInfo(imdbId);
 		if (omdbdto == null) {
 			return Response.status(Status.NOT_FOUND).build();
